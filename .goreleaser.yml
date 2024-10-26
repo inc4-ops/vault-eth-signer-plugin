@@ -1,3 +1,4 @@
+version: 2
 builds:
   - main: ./cmd/main.go  # Specify the path to your main.go file
     id: "vault-eth-signer-plugin"
