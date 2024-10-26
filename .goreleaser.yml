@@ -13,24 +13,21 @@ builds:
     env:
       - CGO_ENABLED=0
 
+
 archives:
-  - format: tar.gz  # Specify the archive format
+  - id: "vault-eth-signer-plugin"
     name_template: >-
-      {{ .ProjectName }}_
+      {{- .ProjectName }}_
       {{- title .Os }}_
       {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
-    replacements:
-      linux: Linux
-      amd64: x86_64
+      {{- if .Arm }}v{{ .Arm }}{{ end -}}
 
 checksum:
   name_template: 'checksums.txt'
-  algorithm: sha256
-
 snapshot:
   name_template: "{{ .Tag }}-next"
-
 changelog:
   sort: asc
   filters:
