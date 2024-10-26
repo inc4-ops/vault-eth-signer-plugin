@@ -1,0 +1,38 @@
+builds:
+  - main: ./cmd/main.go  # Specify the path to your main.go file
+    id: "vault-eth-signer-plugin"
+    binary: vault-eth-signer-plugin  # This should match your plugin name
+    goos:
+      - linux
+    goarch:
+      - amd64
+    # Optional: Add build flags if needed
+    # flags:
+    #   - -trimpath
+    env:
+      - CGO_ENABLED=0
+
+archives:
+  - format: tar.gz  # Specify the archive format
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else }}{{ .Arch }}{{ end }}
+    replacements:
+      linux: Linux
+      amd64: x86_64
+
+checksum:
+  name_template: 'checksums.txt'
+  algorithm: sha256
+
+snapshot:
+  name_template: "{{ .Tag }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
