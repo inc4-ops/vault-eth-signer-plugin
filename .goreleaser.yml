@@ -1,18 +1,17 @@
 version: 2
 builds:
-  - main: ./cmd/main.go  # Specify the path to your main.go file
+  - main: ./cmd/main.go
     id: "vault-eth-signer-plugin"
-    binary: vault-eth-signer-plugin  # This should match your plugin name
+    binary: vault-eth-signer-plugin
     goos:
       - linux
     goarch:
       - amd64
-    # Optional: Add build flags if needed
-    # flags:
-    #   - -trimpath
     env:
       - CGO_ENABLED=0
-
+    hooks:
+      post:
+        - sh -c 'cosign sign-blob --output-signature dist/{{ .ProjectName }}_{{ .Version }}_{{ .Target }}.sig --output-bundle dist/{{ .ProjectName }}_{{ .Version }}_{{ .Target }}.bundle {{ .Path }}'
 
 archives:
   - id: "vault-eth-signer-plugin"
@@ -23,11 +22,21 @@ archives:
       {{- else if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end -}}
+    files:
+      - dist/*.sig
+      - dist/*.bundle
 
 checksum:
   name_template: 'checksums.txt'
+
+release:
+  extra_files:
+    - glob: dist/*.sig
+    - glob: dist/*.bundle
+
 snapshot:
   name_template: "{{ .Tag }}-next"
+
 changelog:
   sort: asc
   filters:
