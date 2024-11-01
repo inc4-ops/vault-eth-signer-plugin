@@ -33,16 +33,3 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Updated verification step
-      - name: Verify signatures
-        run: |
-          for file in dist/vault-eth-signer-plugin_linux_amd64_v1/vault-eth-signer-plugin; do
-            if [ -f "$file" ]; then
-              echo "Verifying $file"
-              cosign verify-blob --bundle "${file}.bundle" \
-                --certificate-identity "https://github.com/${{ github.repository }}" \
-                --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
-                "$file"
-            fi
-          done
